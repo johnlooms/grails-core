@@ -23,7 +23,6 @@ import grails.util.BuildSettings
 import grails.util.Environment
 import grails.util.GrailsUtil
 import groovy.util.logging.Slf4j
-import org.grails.spring.context.support.PluginAwareResourceBundleMessageSource
 import org.grails.web.i18n.ParamsAwareLocaleChangeInterceptor
 import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.core.io.Resource
@@ -51,13 +50,14 @@ class I18nGrailsPlugin extends Plugin {
         boolean gspEnableReload = config.getProperty(Settings.GSP_ENABLE_RELOAD, Boolean, false)
         String encoding = config.getProperty(Settings.GSP_VIEW_ENCODING, 'UTF-8')
 
-        messageSource(PluginAwareResourceBundleMessageSource, application, pluginManager) {
+        messageSource(BundleMessageSourceWithPrecessor, application, pluginManager) {
             fallbackToSystemLocale = false
             if (Environment.current.isReloadEnabled() || gspEnableReload) {
                 cacheSeconds = config.getProperty(Settings.I18N_CACHE_SECONDS, Integer, 5)
                 fileCacheSeconds = config.getProperty(Settings.I18N_FILE_CACHE_SECONDS, Integer, 5)
             }
             defaultEncoding = encoding
+//            messageSourcePrecessor= application.mainContext.getBean('messageSourcePrecessor')
         }
 
         localeChangeInterceptor(ParamsAwareLocaleChangeInterceptor) {
